@@ -65,3 +65,27 @@ class Multi_Head_Attn(tf.keras.layers.layer):
         #linear
         outputs = self.dense(concat_attn)
         return outputs
+
+class positional_encoding(tf.keras.layers.layer):
+
+    def __init__(self, position, model):
+        super(positional_encoding,self).__init__()
+        self.pos_encode = self.pos_encoding(position, model)
+
+    def get_angles(self, position, i, model):
+        angles = 1 / tf.pow(10000, (2 * (i // 2)) / tf.cast(model, tf.float32))
+        return position * angles
+
+    def pos_encoding(self, position, model):
+        angle_r = self.get_angles(
+                    position=tf.range(position, dtype=tf.float32)[:, tf.newaxis],
+                    model=model)
+        sin_val = tf.math.sin(angle_r[:,0::2])
+        cos_val = tf.math.cos(angle_r[:,1::2])
+
+        pos_encode = tf.concat([sin_val, cos_val], axis=-1)
+        pos_encode = tf.concat([tf.newaxis, ...])
+        return tf.cast(pos_encode, tf.float32)
+
+    def call(self, inputs):
+        return inputs + self.pos_encode[:, :, :tf.shape(inputs[1], :)]
