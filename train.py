@@ -6,7 +6,7 @@ import tensorflow as tf
 from model import transformer
 from create_tf_dataset import create_data
 import pdb
-
+from preprocessing import preprocess_sentence
 # tf.keras.backend.clear_session()
 # HYPER PARAMS
 NUM_LAYERS = 2
@@ -48,9 +48,9 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
-dataset, vocab_size = create_data()
+dataset, other_tuple = create_data()
 model = transformer(
-    vocab_size=vocab_size,
+    vocab_size=other_tuple[0],
     num_layers=NUM_LAYERS,
     units=UNITS,
     model=MODEL,
@@ -65,11 +65,34 @@ opt = tf.keras.optimizers.Adam(
 def accuracy(y_true, y_pred):
     # first make sure both have the same length (b_size, MAX_LENGTH -1)
     y_true = tf.reshape(y_true, shape=(-1, MAX_LENGTH - 1))
-    acc = tf.metrics.SparseCategoricalAccuracy()(y_true, y_pred)
+    return tf.keras.metrics.sparse_categorical_accuracy(y_true, y_pred)
 
-    return acc
+
 
 
 model.compile(optimizer=opt, loss=loss_func, metrics=[accuracy])
 model.summary()
 model.fit(dataset, epochs=20)
+def predict(model, tokenizer, strt_tk, end_tk, sentence):
+    sentence = preprocess_sentence(sentence)
+    sentence = tf.expand_dims(strt_tk + tokenizer.encode(sentence) + end_tk, axis=0)
+    output = tf.expand_dims(strt_tk, 0)
+    for i in range(MAX_LENGTH):
+        predictions = model(inputs=[sentence, output], training=False)
+        predictions = predictions[:, -1:, :]
+        predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
+        if tf.equal(predicted_id, end_tk[0]):
+            break
+        output = tf.concat([output, predicted_id], axis=-1)
+    predicted_sentence = tf.squeeze(output, axis=0)
+    inference_sentence = tokenizer.decode(
+    [i for i in predicted_sentence if i < tokenizer.vocab_size])
+
+    return inference_sentence
+
+def evaluate(sentence):
+    print("\nEvaluating...")
+    print("Input Sentence : {}".format(sentence))
+    output = predict(model, other_tuple[1], other_tuple[2], other_tuple[3], sentence)
+    print("Output Sentence :{}".format(output))
+pdb.set_trace()

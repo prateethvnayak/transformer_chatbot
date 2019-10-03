@@ -10,7 +10,7 @@ BUFFER_SIZE = 20000
 
 
 def create_data():
-    questions, answers, vocab_size = preprocessing.prepare_data()
+    questions, answers, vocab_size, tokenizer, start_tk, end_tk = preprocessing.prepare_data()
     dataset = tf.data.Dataset.from_tensor_slices((
         {
             'inputs': questions,
@@ -25,7 +25,7 @@ def create_data():
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print("\n\n\n", dataset)
-    return dataset, vocab_size
+    return dataset, (vocab_size, tokenizer, start_tk, end_tk)
 
 
 # if __name__ == '__main__':

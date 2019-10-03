@@ -95,7 +95,7 @@ def prepare_data():
     print('Vocab Size :{}'.format(vocab_size))
     print('No. of Samples :{}\n\n\n'.format(len(questions)))
 
-    return questions, answers, vocab_size
+    return questions, answers, vocab_size, tokenizer, start_tk, end_tk
 
 
 # if __name__ == '__main__':
