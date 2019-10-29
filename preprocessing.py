@@ -13,7 +13,7 @@ path_movie_lines = os.path.join(_DATA_PATH, 'movie_lines.txt')
 path_movie_conv = os.path.join(_DATA_PATH, 'movie_conversations.txt')
 
 MAX_LENGTH = 40
-MAX_SAMPLES = 50000
+MAX_SAMPLES = 200000
 
 # UTILS
 

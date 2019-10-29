@@ -15,7 +15,7 @@ NUM_HEADS = 8
 UNITS = 512
 DROPOUT = 0.1
 MAX_LENGTH = 40  # (same as in preprocessing.py)
-EPOCHS = 20
+EPOCHS = 50
 
 
 def loss_func(y_true, y_pred):
@@ -68,11 +68,11 @@ def accuracy(y_true, y_pred):
     return tf.keras.metrics.sparse_categorical_accuracy(y_true, y_pred)
 
 
-
-
 model.compile(optimizer=opt, loss=loss_func, metrics=[accuracy])
 model.summary()
-model.fit(dataset, epochs=20)
+model.fit(dataset, epochs=EPOCHS)
+
+
 def predict(model, tokenizer, strt_tk, end_tk, sentence):
     sentence = preprocess_sentence(sentence)
     sentence = tf.expand_dims(strt_tk + tokenizer.encode(sentence) + end_tk, axis=0)
@@ -86,13 +86,16 @@ def predict(model, tokenizer, strt_tk, end_tk, sentence):
         output = tf.concat([output, predicted_id], axis=-1)
     predicted_sentence = tf.squeeze(output, axis=0)
     inference_sentence = tokenizer.decode(
-    [i for i in predicted_sentence if i < tokenizer.vocab_size])
+        [i for i in predicted_sentence if i < tokenizer.vocab_size])
 
     return inference_sentence
+
 
 def evaluate(sentence):
     print("\nEvaluating...")
     print("Input Sentence : {}".format(sentence))
     output = predict(model, other_tuple[1], other_tuple[2], other_tuple[3], sentence)
     print("Output Sentence :{}".format(output))
+
+
 pdb.set_trace()
