@@ -24,15 +24,9 @@ TRIE_FILE = 'pretrained/models/trie'
 
 def get_text(wav_file):
 
-    # curr_path = os.getcwd()
-    # print(MODEL_FILE)
-    # if os.path.isfile(MODEL_FILE):
     ds = Model(MODEL_FILE, N_FEATURES, N_CONTEXT, ALPHABET_FILE, BEAM_WIDTH)
     ds.enableDecoderWithLM(ALPHABET_FILE, LANGUAGE_MODEL, TRIE_FILE, LM_WEIGHT, VALID_WORD_COUNT_WEIGHT)
     fs, audio = wavfile.read(wav_file)
-    # pdb.set_trace()
-    # audio = audio[:, 0]
-    # audio = audio.reshape(-1, 1)
     processed_data = ds.stt(audio, fs)
 
     print(processed_data)
