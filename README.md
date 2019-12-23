@@ -17,6 +17,7 @@ The conversational has two-stage module:
     - [ ] Analysis of Lr Schedule based on Paper
 
 Speech-to-Text Deep Module References:
+
 `wget https://github.com/mozilla/DeepSpeech/releases/download/v0.5.1/deepspeech-0.5.1-models.tar.gz`
 
 Converting Sample Audio Samples for 16-bit, 16Hz, Mono-Channel WAV-Audio:
