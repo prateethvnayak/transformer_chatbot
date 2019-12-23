@@ -21,6 +21,7 @@ Speech-to-Text Deep Module References:
 `wget https://github.com/mozilla/DeepSpeech/releases/download/v0.5.1/deepspeech-0.5.1-models.tar.gz`
 
 Converting Sample Audio Samples for 16-bit, 16Hz, Mono-Channel WAV-Audio:
+
 `ffmpeg -i 111.mp3 -acodec pcm_s16le -ac 1 -ar 16000 out.wav`
 
 Ref for Dataset and Sample Audio:
